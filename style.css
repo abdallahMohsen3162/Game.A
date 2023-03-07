@@ -5,9 +5,29 @@
 }
 
 canvas {
-    background-color: #6c6a6a;
+    background-color: transparent;
+    /* background-color: #6c6a6a; */
+    /* background-repeat: no-repeat; */
+    /* background-size: cover; */
+    /* background-image: url(https://media.giphy.com/media/U3qYN8S0j3bpK/giphy.gif) */
 }
 
 body {
     overflow: hidden;
+}
+
+img {
+    position: absolute;
+    z-index: -1;
+    height: 100%;
+    width: fit-content;
+    min-width: 100%;
+}
+
+img::selection {
+    background-color: transparent;
+}
+
+.canvas-container::selection {
+    background-color: transparent;
 }

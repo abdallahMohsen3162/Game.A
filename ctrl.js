@@ -7,13 +7,25 @@ ctx.height = innerHeight;
 let h = ctx.height,
     w = ctx.width;
 
+
+let mp = new Map();
+mp["white"] = 10;
+mp["red"] = -10;
+
+let clrs = [
+    "white",
+    "red"
+];
+
 class Rectangle {
-    constructor(x, y, w, h, color = "balck") {
+    constructor(x, y, w, h, color = "#ececec") {
         this.x = x;
         this.y = y;
         this.w = w;
         this.h = h;
         this.color = color;
+        this.jump = 20;
+
     }
     drow = () => {
         c.beginPath();
@@ -23,6 +35,14 @@ class Rectangle {
 
     update = () => {
         this.drow();
+    }
+    rightmove = () => {
+        if (this.jump + this.w + this.x > w) return;
+        rects[0].x += (rects[0].w / 3);
+    }
+    lefttmove = () => {
+        if (this.x - this.jump < 0) return;
+        rects[0].x -= (rects[0].w / 3);
     }
 }
 
@@ -99,7 +119,7 @@ function grow(dw) {
 
 
 class Circle {
-    constructor(x, y, radius, dx, dy, color = "black") {
+    constructor(x, y, radius, dx, dy, color = "white") {
         this.x = x;
         this.y = y;
         this.radius = radius;
@@ -151,15 +171,14 @@ class Circle {
             this.vel.y = -this.vel.y;
         }
 
-        if (this.x + this.radius >= rects[0].x && this.x + this.radius < rects[0].x + rects[0].w) {
-            if (this.y + this.radius >= rects[0].y) {
+        if (this.x + this.radius >= rects[0].x && this.x + this.radius <= rects[0].x + rects[0].w) {
+            if (this.y + this.radius >= rects[0].y && this.y + this.radius <= rects[0].y + rects[0].h) {
                 this.vel.y = -this.vel.y;
-                grow(10);
+                grow(mp[this.color]);
+                console.log(circles.length)
             }
         }
-        // if (this.y + this.radius >= h || this.y - this.radius <= 0) {
-        //     this.vel.y = -this.vel.y;
-        // }
+
         this.drow();
     }
 }
@@ -168,21 +187,23 @@ class Circle {
 let HHH = 10;
 rects.push(new Rectangle(w / 2, h - (HHH + 20), 200, HHH));
 
-for (let i = 0; i < 1; i++) {
+for (let i = 0; i < 30; i++) {
     let r = 10;
+    let clr = clrs[Math.floor(Math.random() * clrs.length)];
     let x = randomIntFromRange(r, w - r);
     let y = randomIntFromRange(r, h - r);
-    circles.push(new Circle(x, y, r, 1, -10));
+    circles.push(new Circle(x, y, r, 1, -3, clr));
 }
 
 document.onkeydown = function(e) {
     let jump = 10;
     if (e.keyCode == 39 && rects[0].x + rects[0].w + jump <= w) {
-        rects[0].x += 10;
+        rects[0].rightmove();
     } else if (e.keyCode == 37 && rects[0].x - jump >= 0) {
-        rects[0].x -= 10;
+        rects[0].lefttmove();
     }
 }
+
 
 function animation() {
     c.clearRect(0, 0, w, h);
