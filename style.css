@@ -31,3 +31,17 @@ img::selection {
 .canvas-container::selection {
     background-color: transparent;
 }
+
+.scr {
+    padding: 10px;
+    z-index: 1000;
+    font-weight: bolder;
+    color: #ececec;
+    position: absolute;
+    width: 200px;
+    text-align: center;
+    top: 20%;
+    font-size: xx-large;
+    left: 50%;
+    transform: translateX(-50%);
+}

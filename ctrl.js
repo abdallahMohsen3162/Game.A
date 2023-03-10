@@ -7,7 +7,7 @@ ctx.height = innerHeight;
 let h = ctx.height,
     w = ctx.width;
 
-
+let COUNTER = 0;
 let mp = new Map();
 mp["white"] = 10;
 mp["red"] = -10;
@@ -34,7 +34,9 @@ class Rectangle {
     }
 
     update = () => {
+
         this.drow();
+
     }
     rightmove = () => {
         if (this.jump + this.w + this.x > w) return;
@@ -43,6 +45,11 @@ class Rectangle {
     lefttmove = () => {
         if (this.x - this.jump < 0) return;
         rects[0].x -= (rects[0].w / 3);
+    }
+
+    grow = (ddw) => {
+        if (this.w + ddw <= 100 || this.w + ddw >= 500) return;
+        this.w += ddw;
     }
 }
 
@@ -113,10 +120,12 @@ function resolveCollision(particle, otherParticle) {
 let circles = [];
 let rects = [];
 
-function grow(dw) {
-    rects[0].w += dw;
-}
 
+function gain(d) {
+    let score = document.querySelector(".scr");
+    COUNTER += d;
+    score.innerHTML = COUNTER;
+}
 
 class Circle {
     constructor(x, y, radius, dx, dy, color = "white") {
@@ -174,8 +183,21 @@ class Circle {
         if (this.x + this.radius >= rects[0].x && this.x + this.radius <= rects[0].x + rects[0].w) {
             if (this.y + this.radius >= rects[0].y && this.y + this.radius <= rects[0].y + rects[0].h) {
                 this.vel.y = -this.vel.y;
-                grow(mp[this.color]);
-                console.log(circles.length)
+                rects[0].grow(mp[this.color]);
+                if (this.color == 'white') gain(1);
+                else gain(-1);
+                console.log(COUNTER);
+
+
+                let indx = 0;
+                for (let i = 0; i < circles.length; i++) {
+                    if (circles[i] == this) {
+                        indx = i;
+                        break;
+                    }
+                }
+                circles.splice(indx, 1);
+
             }
         }
 
@@ -185,15 +207,22 @@ class Circle {
 
 
 let HHH = 10;
-rects.push(new Rectangle(w / 2, h - (HHH + 20), 200, HHH));
+rects.push(new Rectangle(w / 2, h - (HHH), 200, HHH));
 
-for (let i = 0; i < 30; i++) {
+
+
+
+function generate() {
     let r = 10;
+    // let clr = 'red';
     let clr = clrs[Math.floor(Math.random() * clrs.length)];
     let x = randomIntFromRange(r, w - r);
-    let y = randomIntFromRange(r, h - r);
-    circles.push(new Circle(x, y, r, 1, -3, clr));
+    // let y = randomIntFromRange(r, h - r);
+    let dx = (Math.random() - 0.5) * 40;
+    circles.push(new Circle(x, r + 1, r, dx, -3, clr));
 }
+
+
 
 document.onkeydown = function(e) {
     let jump = 10;
@@ -204,6 +233,7 @@ document.onkeydown = function(e) {
     }
 }
 
+let timer = setInterval(generate, 1000);
 
 function animation() {
     c.clearRect(0, 0, w, h);
